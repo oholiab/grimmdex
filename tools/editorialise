@@ -1,0 +1,14 @@
+#!/bin/bash -xe
+while read -r file; do
+  prompt="# editorial for $file"
+  tmpfile=$(mktemp /tmp/gacms.XXXX)
+  echo $prompt > $tmpfile
+  $EDITOR $tmpfile < /dev/tty
+  if [ "$(cat $tmpfile)" = "$prompt" ]; then
+    rm $tmpfile
+    continue
+  else
+    git annex metadata -s editorial="$(cat $tmpfile)" "$file"
+    rm $tmpfile
+  fi
+done< <(git annex find --metadata editorial=none)

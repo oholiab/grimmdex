@@ -1,0 +1,14 @@
+#!/bin/bash -xe
+OS=$(uname)
+
+# Darwin in "Format Flags Make More Sense Than Linux" shocker
+if [ "$OS" = "Darwin" ]; then
+  STATFLAGS="-f %m"
+else
+  STATFLAGS="-c %Y"
+fi
+
+while read -r i; do
+  echo "Adding timestamp for $i"
+  git annex metadata -s timestamp=$(stat "$STATFLAGS" "$i") "$i"
+done < <(git annex find --metadata timestamp=untagged) 

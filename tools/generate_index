@@ -1,0 +1,62 @@
+#!/bin/bash -xe
+WORKING_DIR=${WORKING_DIR} || $(pwd)
+
+HEADER=${1-${WORKING_DIR}/header.html}
+FOOTER=${2-${WORKING_DIR}/footer.html}
+TARGET=${WORKING_DIR}/../index.html
+
+function generate_index {
+  cat ${HEADER}
+  parse_metadata git annex metadata
+  cat ${FOOTER}
+}
+
+function print_entry {
+  local file="$1"
+  local metadata="$2"
+  local web_remote="$3"
+  echo "<a href='${file}'>$file</a>"
+  echo "$metadata" | fold -w 80 -s
+  if [ "$web_remote" != "" ]; then
+    echo "  view online: <a href='$web_remote'>$web_remote</a>"
+  fi
+  echo ""
+}
+
+function sort_by_timestamp {
+  local files="$1"
+  local timestamped=
+  while read -r file; do
+    timestamped="$(echo -e "${timestamped}\n$(git annex metadata -g timestamp "$file") $file")"
+  done< <(echo "$files")
+  echo "$timestamped" | sort -n -r -t ' '
+}
+
+function get_annexed {
+  for i in $(find . -type l); do 
+    readlink $i | grep -qE '\.git/annex/objects/' && echo $i
+  done
+}
+
+function parse_metadata {
+  local metadata
+  local file_list="$(get_annexed)"
+  local timestamped=$(sort_by_timestamp "$file_list")
+
+  while read -r file; do
+    metadata="$(git annex metadata "$file" | \
+      grep -vE '^metadata .+' | \
+      grep -vE '^ok$' | \
+      grep -v lastchanged)"
+    web_remote="$(git annex whereis "$file" | \
+      grep "web:" | \
+      sed -E 's|^.+(http.+)$|\1|')"
+    print_entry "$file" "$metadata" "$web_remote"
+  done< <(echo "$timestamped" | cut -f2- -d " ")
+}
+
+function main {
+  generate_index > ${TARGET}
+}
+
+main
