@@ -11,8 +11,8 @@ function main {
     echo "grimmdex directory must be named cms... sorry." >&2
     exit 1
   fi
-  if git annex status 2>/dev/null \
-    && [ "$(git rev-parse --show-toplevel)" = "$(dirname $(pwd))" ] 
+  if [ "$(cd ../ && git annex status 2>/dev/null && echo true)" = "true" ] \
+    && [ "$( cd ../ && git rev-parse --show-toplevel)" = "$(dirname $(pwd))" ] 
   then 
     setup
   else 
