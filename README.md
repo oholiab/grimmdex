@@ -27,6 +27,7 @@ Then
 
     cd cms
     ./setup.sh
+    echo "Makefile" >> .gitignore
 
 You will then be able to run
 
