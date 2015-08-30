@@ -10,5 +10,5 @@ fi
 
 while read -r i; do
   echo "Adding timestamp for $i"
-  git annex metadata -s timestamp=$(stat "$STATFLAGS" "$i") "$i"
+  git annex metadata -s timestamp=$(stat $STATFLAGS "$i") "$i"
 done < <(git annex find --metadata timestamp=untagged) 
