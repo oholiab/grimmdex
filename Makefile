@@ -4,6 +4,8 @@ CMS_DIR=$(PWD)/cms
 ALL_CONTENT="$(wildcard videos/*)"
 ALL_CONTENT+= "$(wildcard articles/*)"
 ALL_CONTENT+= "$(wildcard fiction/*)"
+ALL_CONTENT+= "$(wildcard audio/*)"
+ALL_CONTENT+= "$(wildcard audio/transcripts/*)"
 .PHONY: timestamp index sync $(ALL_CONTENT)
 
 default: index
