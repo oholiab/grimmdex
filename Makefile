@@ -13,7 +13,7 @@ default: index
 index: $(CMS_DIR)/index.html
 
 timestamp: $(ALL_CONTENT)
-	git annex metadata -s timestamp\?=untagged
+	git annex metadata --force -s timestamp\?=untagged
 	$(TOOLS)/add_timestamp_to_untagged
 
 editorialise: $(ALL_CONTENT)
