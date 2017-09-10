@@ -17,7 +17,7 @@ timestamp: $(ALL_CONTENT)
 	$(TOOLS)/add_timestamp_to_untagged
 
 editorialise: $(ALL_CONTENT)
-	git annex metadata -s editorial\?=none
+	git annex metadata --force -s editorial\?=none
 	$(TOOLS)/editorialise
 
 sync:
